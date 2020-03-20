@@ -7,29 +7,41 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MovieAdapter(private val moviesDataset: List<Movie>)
+class MovieAdapter(private val moviesDataset: List<Movie>, var listenerMovie: MovieListEventListener)
     : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
 
-    class MovieViewHolder(val relativeLayout: RelativeLayout)
-        : RecyclerView.ViewHolder(relativeLayout)
+    class MovieViewHolder(relativeLayout: RelativeLayout)
+        : RecyclerView.ViewHolder(relativeLayout){
+        private val img: ImageView = relativeLayout.findViewById(R.id.img)
+        private val title: TextView = relativeLayout.findViewById(R.id.title)
+        private val releaseDate: TextView = relativeLayout.findViewById(R.id.release_date)
+        private val genres = relativeLayout.findViewById<TextView>(R.id.genres_list)
+
+        public lateinit var movie : Movie
+
+        fun setMovieData(_movie : Movie){
+            movie = _movie
+            img.setImageResource(movie.poster)
+            title.text = movie.title
+            releaseDate.text = movie.releaseDate.toString()
+            genres.text = movie.genres.joinToString()
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val relativeLayout = LayoutInflater.from(parent.context)
             .inflate(R.layout.movie_list_member,parent,false) as RelativeLayout
 
-        return MovieViewHolder(relativeLayout)
+        val movieViewHolder = MovieViewHolder(relativeLayout)
+
+        relativeLayout.setOnClickListener {listenerMovie.onClick(movieViewHolder.movie)}
+
+        return movieViewHolder
     }
 
     override fun getItemCount() = moviesDataset.size
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val img = holder.relativeLayout.findViewById<ImageView>(R.id.img)
-            .setImageResource(moviesDataset[position].poster)
-        val title = holder.relativeLayout.findViewById<TextView>(R.id.title)
-            .setText(moviesDataset[position].title)
-        val releaseDate = holder.relativeLayout.findViewById<TextView>(R.id.release_date)
-            .setText(moviesDataset[position].releaseDate.toString())
-        val genres = holder.relativeLayout.findViewById<TextView>(R.id.genres_list)
-            .setText(moviesDataset[position].genres.joinToString())
+        holder.setMovieData(moviesDataset[position])
     }
 }
