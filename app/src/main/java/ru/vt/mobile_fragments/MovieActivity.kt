@@ -13,8 +13,8 @@ class MovieActivity : AppCompatActivity() {
         setContentView(R.layout.activity_movie)
 
         val fragmentManager = supportFragmentManager
-        movieListFragment = fragmentManager.findFragmentById(R.id.movie_list_fragment) as MovieListFragment
-        movieListFragment.setMovies(createHelper())
+        movieListFragment = MovieListFragment(createHelper())
+        fragmentManager.beginTransaction().add(R.id.constraint_layout, movieListFragment).commit()
     }
 
     private fun createHelper(): List<Movie>{
